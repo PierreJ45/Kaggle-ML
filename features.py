@@ -66,3 +66,6 @@ other_features_func = {
 other_features = list(other_features_func.keys())
 
 all_features = base_features + other_features
+
+urban_types = ['Dense Urban', 'Sparse Urban', 'Industrial', 'N,A', 'Rural', 'Urban Slum']
+geography_types = ['N,A', 'Barren Land', 'Hills', 'Dense Forest', 'Desert', 'Sparse Forest', 'River', 'Grass Land', 'Farms', 'Coastal', 'Snow', 'Lakes']
