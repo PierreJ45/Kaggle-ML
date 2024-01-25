@@ -3,6 +3,9 @@ from datetime import datetime
 
 NB_DATES = 5
 COLORS = ["red", "green", "blue"]
+COLOR_FEATURES = []
+DATE_FEATURES = []
+CHANGE_STATUS_DATE_FEATURES = []
 
 
 def get_date(row, i) -> float:
@@ -29,10 +32,13 @@ base_features_func = {
 for i in range(NB_DATES):
     base_features_func[f"date{i}"] = partial(get_date, i=i)
     base_features_func[f"change_status_date{i}"] = None
+    DATE_FEATURES.append(f"date{i}")
+    CHANGE_STATUS_DATE_FEATURES.append(f"change_status_date{i}")
     
     for color in COLORS:
         for value in ["mean", "std"]:
             base_features_func[f"img_{color}_{value}_date{i + 1}"] = None
+            COLOR_FEATURES.append(f"img_{color}_{value}_date{i + 1}")
 
 
 def get_area(row) -> float:
