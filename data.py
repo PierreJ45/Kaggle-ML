@@ -48,14 +48,30 @@ def get_train_data(features: List[str] = all_features, n_data=-1, test_size=0.2)
 def get_test_data(features=all_features):
     print("Reading test csvs...")
     test_df = gpd.read_file("data/test.geojson", index_col=0)
+
+    for feature in features:
+        if feature not in all_features:
+            raise ValueError(f"Feature {feature} is not a valid feature (you may want to implement it in features.py)")
     
-    test_x = test_df[features]
+    used_base_features = [feature for feature in features if feature in base_features]
+    used_other_features = [feature for feature in features if feature in other_features]
     
-    test_x = (test_x - test_x.mean()) / test_x.std()
+    test_x = test_df[used_base_features]
+    
+    for feature in base_features:
+        if base_features_func[feature] is not None:
+            test_df[feature] = test_df.apply(base_features_func[feature], axis=1)
+        
+        if feature in used_base_features: #in case it was changed previous if ?
+            test_x[feature] = test_df[feature] 
+    
+    for feature in used_other_features:
+        test_x[feature] = test_df.apply(other_features_func[feature], axis=1)
     
     return test_x
 
 
 if __name__ == "__main__":
-    train_x, train_y, test_x, test_y = get_train_data(["area", "duration", "date0"], 100)
-    print(train_x)
+    #train_x, train_y, test_x, test_y = get_train_data(["area", "duration", "date0"], 100)
+    test_x = get_test_data(["area", "duration", "date0"])
+    print(test_x.head())
