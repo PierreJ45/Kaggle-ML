@@ -7,6 +7,11 @@ from typing import List
 
 change_type_id = {"Demolition": 0, "Road": 1, "Residential": 2, "Commercial": 3, "Industrial": 4, "Mega Projects": 5}
 
+def normalize(x):
+    for feature in x.columns:
+        if x[feature].dtype == np.float64:
+            x[feature] = (x[feature] - x[feature].mean()) / x[feature].std()
+
 
 def get_train_data(features: List[str] = all_features, n_data=-1, test_size=0.2):
     print("Reading train csvs...")
