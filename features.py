@@ -6,6 +6,8 @@ COLORS = ["red", "green", "blue"]
 COLOR_FEATURES = []
 DATE_FEATURES = []
 CHANGE_STATUS_DATE_FEATURES = []
+URBAN_TYPES = ['Dense Urban', 'Sparse Urban', 'Industrial', 'N,A', 'Rural', 'Urban Slum']
+GEOGRAPHY_TYPES = ['N,A', 'Barren Land', 'Hills', 'Dense Forest', 'Desert', 'Sparse Forest', 'River', 'Grass Land', 'Farms', 'Coastal', 'Snow', 'Lakes']
 
 
 def get_date(row, i) -> float:
@@ -25,7 +27,6 @@ base_features_func = {
     "urban_type": None,
     "geography_type": None,
     "urban_type": None,
-    "geography_type": None,
     "index": None,
 }
 
@@ -72,6 +73,3 @@ other_features_func = {
 other_features = list(other_features_func.keys())
 
 all_features = base_features + other_features
-
-urban_types = ['Dense Urban', 'Sparse Urban', 'Industrial', 'N,A', 'Rural', 'Urban Slum']
-geography_types = ['N,A', 'Barren Land', 'Hills', 'Dense Forest', 'Desert', 'Sparse Forest', 'River', 'Grass Land', 'Farms', 'Coastal', 'Snow', 'Lakes']
