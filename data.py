@@ -13,7 +13,7 @@ def normalize(x):
             x[feature] = (x[feature] - x[feature].mean()) / x[feature].std()
 
 
-def get_train_data(features: List[str] = all_features, n_data=-1, test_size=0.2):
+def get_train_data(features: List[str] = all_features, n_data=-1, val_size=0.2):
     print("Reading train csvs...")
     train_df: gpd.GeoDataFrame = gpd.read_file("data/train.geojson", index_col=0, rows=n_data)
     
@@ -38,11 +38,12 @@ def get_train_data(features: List[str] = all_features, n_data=-1, test_size=0.2)
     
     train_y = train_df["change_type"].apply(change_type_id.get)
     
-    # train_x = (train_x - train_x.mean()) / train_x.std()
+    train_x, val_x, train_y, val_y = train_test_split(train_x, train_y, test_size=val_size, random_state=42)
+
+    normalize(train_x)
+    normalize(val_x)
     
-    train_x, test_x, train_y, test_y = train_test_split(train_x, train_y, test_size=test_size, random_state=42)
-    
-    return train_x, train_y, test_x, test_y
+    return train_x, train_y, val_x, val_y
 
 
 def get_test_data(features=all_features):
@@ -67,11 +68,17 @@ def get_test_data(features=all_features):
     
     for feature in used_other_features:
         test_x[feature] = test_df.apply(other_features_func[feature], axis=1)
+
+    normalize(test_x)
     
     return test_x
 
 
 if __name__ == "__main__":
-    #train_x, train_y, test_x, test_y = get_train_data(["area", "duration", "date0"], 100)
+    train_x, train_y, val_x, val_y = get_train_data(["area", "duration", "date0"], 100)
     test_x = get_test_data(["area", "duration", "date0"])
+    print(train_x.head())
+    print(train_y.head())
+    print(val_x.head())
+    print(val_y.head())
     print(test_x.head())
