@@ -9,8 +9,10 @@ change_type_id = {"Demolition": 0, "Road": 1, "Residential": 2, "Commercial": 3,
 
 def normalize(x):
     for feature in x.columns:
-        if x[feature].dtype == np.float64:
-            x[feature] = (x[feature] - x[feature].mean()) / x[feature].std()
+        if x[feature].dtype == np.float64 or x[feature].dtype == np.int64:
+            std = x[feature].std()
+            if std != 0:
+                x[feature] = (x[feature] - x[feature].mean()) / std
 
 
 def get_train_data(features: List[str] = all_features, n_data=-1, val_size=0.2):
@@ -76,9 +78,14 @@ def get_test_data(features=all_features):
 
 if __name__ == "__main__":
     train_x, train_y, val_x, val_y = get_train_data(["area", "duration", "date0"], 100)
-    test_x = get_test_data(["area", "duration", "date0"])
     print(train_x.head())
-    print(train_y.head())
+    print('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',train_x['area'].mean())
+    print('bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb',train_x['area'].std())
+    print('cccccccccccccccccccccccccccccccccccccc',train_x['duration'].mean())
+    print('dddddddddddddddddddddddddddddddddddddd',train_x['duration'].std())
+    print('eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee',train_x['date0'].mean())
+    print('ffffffffffffffffffffffffffffffffffffff',train_x['date0'].std())
+    print('11111111111111111111111111111111111111',train_x['area'].dtype)
+    print('22222222222222222222222222222222222222',train_x['duration'].dtype)
+    print('33333333333333333333333333333333333333',train_x['date0'].dtype)
     print(val_x.head())
-    print(val_y.head())
-    print(test_x.head())
