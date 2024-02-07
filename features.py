@@ -7,8 +7,9 @@ COLOR_FEATURES = []
 DATE_FEATURES = []
 CHANGE_STATUS_DATE_FEATURES = []
 URBAN_TYPES = ['Dense Urban', 'Sparse Urban', 'Industrial', 'N,A', 'Rural', 'Urban Slum']
+URBAN_FEATURES = ["urban_type_" + urban_type for urban_type in URBAN_TYPES]
 GEOGRAPHY_TYPES = ['N,A', 'Barren Land', 'Hills', 'Dense Forest', 'Desert', 'Sparse Forest', 'River', 'Grass Land', 'Farms', 'Coastal', 'Snow', 'Lakes']
-
+GEOGRAPHY_FEATURES = ["geography_type_" + geography_type for geography_type in GEOGRAPHY_TYPES]
 
 def get_date(row, i) -> float:
     year_one = datetime.strptime("01-01-2000", "%d-%m-%Y")
@@ -22,13 +23,19 @@ def get_date(row, i) -> float:
     return (date - year_one).days
 
 
+def is_type(row, base_type, type_name) -> float:
+    if type_name in row[base_type]:
+        return 1.0
+    return 0.0
+
+
 base_features_func = {
     "geometry": None,
     "urban_type": None,
     "geography_type": None,
-    "urban_type": None,
     "index": None,
 }
+    
 
 for i in range(NB_DATES):
     base_features_func[f"date{i}"] = partial(get_date, i=i)
@@ -70,6 +77,12 @@ other_features_func = {
     "perimeter": get_perimeter,
     "duration": get_duration,
 }
+
+for urban_feature, urban_type in zip(URBAN_FEATURES, URBAN_TYPES):
+    other_features_func[urban_feature] = partial(is_type, base_type="urban_type", type_name=urban_type)
+for geography_feature, geography_type in zip(GEOGRAPHY_FEATURES, GEOGRAPHY_TYPES):
+    other_features_func[geography_feature] = partial(is_type, base_type="geography_type", type_name=geography_type)
+
 other_features = list(other_features_func.keys())
 
 all_features = base_features + other_features

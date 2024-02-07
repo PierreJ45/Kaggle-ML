@@ -11,8 +11,11 @@ def normalize(x):
     for feature in x.columns:
         if x[feature].dtype == np.float64 or x[feature].dtype == np.int64:
             std = x[feature].std()
+            
             if std != 0:
                 x[feature] = (x[feature] - x[feature].mean()) / std
+            else:
+                x[feature] = 1.0
 
 
 def get_train_data(features: List[str] = all_features, n_data=-1, val_size=0.2):
