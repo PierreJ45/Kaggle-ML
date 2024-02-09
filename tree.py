@@ -1,29 +1,42 @@
 from data import get_train_data
-from features import URBAN_FEATURES, GEOGRAPHY_FEATURES
+from features import *
 from sklearn.tree import DecisionTreeClassifier
 #random forest
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import f1_score
 import matplotlib.pyplot as plt
 from tqdm import tqdm
+from scipy.stats import randint
+from sklearn.model_selection import RandomizedSearchCV
+import pandas as pd
 
-train_x, train_y, test_x, test_y = get_train_data(["duration", "area", "perimeter"] + URBAN_FEATURES + GEOGRAPHY_FEATURES, n_data=-1)
 
-accuracies = []
-for i in tqdm(range(100)):
-    #max_depth=11, min_samples_leaf=1
-    #140: 0.5
-    # model = DecisionTreeClassifier(min_samples_leaf=80 , max_depth=14)
-    model = RandomForestClassifier(n_estimators=i+1)
-    model.fit(train_x, train_y)
+train_x, train_y, test_x, test_y = get_train_data(
+    ["duration", "area", "perimeter"] + URBAN_FEATURES + GEOGRAPHY_FEATURES + COLOR_FEATURES,
+    n_data = None
+)
 
-    predictions = model.predict(test_x)
-    accuracy = f1_score(test_y, predictions, average="weighted")
-    accuracies.append(accuracy)
+param_dist = {
+    'n_estimators': randint(50, 500),
+    'max_depth': randint(1, 50),
+    'min_samples_split': randint(2, 10),
+}
 
-plt.plot(accuracies)
-plt.show()
+rand_search = RandomizedSearchCV(
+    RandomForestClassifier(),
+    param_distributions = param_dist, 
+    n_iter = 5,
+    cv = 2,
+    verbose = 3
+)
 
-# from sklearn.tree import export_text
-# tree_rules = export_text(model, feature_names=["duration", "area", "perimeter"])
-# print(tree_rules)
+rand_search.fit(train_x, train_y)
+
+best_rf = rand_search.best_estimator_
+print('Best hyperparameters:',  rand_search.best_params_)
+
+score = f1_score(test_y, best_rf.predict(test_x), average="weighted")
+print('F1 score:', score)
+
+feature_importances = pd.Series(best_rf.feature_importances_, index=train_x.columns).sort_values(ascending=False)
+print(feature_importances)

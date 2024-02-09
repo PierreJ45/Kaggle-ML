@@ -1,6 +1,8 @@
 from functools import partial
 from datetime import datetime
 
+CLASSES = ['Demolition', 'Road', 'Residential', 'Commercial', 'Industrial', 'Mega Projects']
+NB_CLASSES = len(CLASSES)
 NB_DATES = 5
 COLORS = ["red", "green", "blue"]
 COLOR_FEATURES = []
@@ -29,13 +31,20 @@ def is_type(row, base_type, type_name) -> float:
     return 0.0
 
 
+def null_color(row, color, value, date) -> float:
+    number = row[f"img_{color}_{value}_date{date}"]
+    
+    if number != number: # is NaN
+        return 128.0
+    return number
+
+
 base_features_func = {
     "geometry": None,
     "urban_type": None,
     "geography_type": None,
     "index": None,
 }
-    
 
 for i in range(NB_DATES):
     base_features_func[f"date{i}"] = partial(get_date, i=i)
@@ -45,7 +54,7 @@ for i in range(NB_DATES):
     
     for color in COLORS:
         for value in ["mean", "std"]:
-            base_features_func[f"img_{color}_{value}_date{i + 1}"] = None
+            base_features_func[f"img_{color}_{value}_date{i + 1}"] = partial(null_color, color=color, value=value, date=i + 1)
             COLOR_FEATURES.append(f"img_{color}_{value}_date{i + 1}")
 
 

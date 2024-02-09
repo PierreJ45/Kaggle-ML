@@ -18,9 +18,9 @@ def normalize(x):
                 x[feature] = 1.0
 
 
-def get_train_data(features: List[str] = all_features, n_data=-1, val_size=0.2):
+def get_train_data(features: List[str] = all_features, n_data=None, val_size=0.2):
     print("Reading train csvs...")
-    train_df: gpd.GeoDataFrame = gpd.read_file("data/train.geojson", index_col=0, rows=n_data)
+    train_df: gpd.GeoDataFrame = gpd.read_file("data/train.geojson", engine='pyogrio', rows=None)
     
     for feature in features:
         if feature not in all_features:
