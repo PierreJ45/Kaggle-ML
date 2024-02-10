@@ -31,6 +31,7 @@ def is_type(row, base_type, type_name) -> float:
     return 0.0
 
 
+
 def null_color(row, color, value, date) -> float:
     number = row[f"img_{color}_{value}_date{date}"]
     
