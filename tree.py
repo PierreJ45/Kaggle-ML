@@ -12,6 +12,7 @@ import pandas as pd
 from sklearn.decomposition import PCA
 from sklearn.pipeline import make_pipeline
 import time
+from result import create_result_file
 
 
 features = ["duration", "area", "perimeter", "elongation"] + start_color_features + end_color_features
@@ -60,3 +61,5 @@ print('DataLessTime:', time.time() - t0)
 
 #feature_importances = pd.Series(pipeline.feature_importances_, index=train_x.columns).sort_values(ascending=False)
 #print(feature_importances)
+
+create_result_file(pipeline.predict(test_x))
