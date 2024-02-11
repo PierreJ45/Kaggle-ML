@@ -28,7 +28,7 @@ class Net(nn.Module):
 
 
 def main():
-    features = ["duration", "area", "perimeter", "elongation"] + start_color_features + end_color_features
+    features = ["duration", "area", "perimeter", "elongation"] + start_color_features + end_color_features + GEOGRAPHY_FEATURES
     
     net = Net(len(features), [50, 50, 50])
     criterion = nn.CrossEntropyLoss()

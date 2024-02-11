@@ -21,7 +21,9 @@ def normalize(x):
 
 def get_train_data(features: List[str] = all_features, n_data=-1, val_size=0.2):
     print("Reading train csvs...")
-    train_df: gpd.GeoDataFrame = gpd.read_file("data/train.geojson", engine='pyogrio', rows=n_data)
+    train_df: gpd.GeoDataFrame = gpd.read_file("data/train.geojson", engine='pyogrio')
+    if n_data > 0:
+        train_df = train_df.sample(n_data)
     
     print("Formatting train data...")
     for feature in features:
