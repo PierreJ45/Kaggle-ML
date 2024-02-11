@@ -16,14 +16,12 @@ def normalize(x):
             if std != 0:
                 x[feature] = (x[feature] - x[feature].mean()) / std
             else:
-                x[feature] = 1.0
+                pass
 
 
 def get_train_data(features: List[str] = all_features, n_data=-1, val_size=0.2):
     print("Reading train csvs...")
-    train_df: gpd.GeoDataFrame = gpd.read_file("data/train.geojson", engine='pyogrio')
-    if n_data > 0:
-        train_df = train_df.sample(n=n_data, random_state=42)
+    train_df: gpd.GeoDataFrame = gpd.read_file("data/train.geojson", engine='pyogrio', rows=n_data)
     
     print("Formatting train data...")
     for feature in features:
