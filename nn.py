@@ -28,7 +28,7 @@ class Net(nn.Module):
 
 
 def main():
-    features = ["duration", "area", "perimeter", "elongation"] + start_color_features + end_color_features + GEOGRAPHY_FEATURES
+    features = ["duration", "area", "perimeter", "elongation"] + start_color_features + end_color_features
     
     net = Net(len(features), [50, 50, 50])
     criterion = nn.CrossEntropyLoss()
@@ -63,7 +63,12 @@ def main():
     print(net(train_x).argmax(1).numpy())
     print(train_y.argmax(1).numpy())
     score = f1_score(val_y.values, pred_y, average="weighted")
-    print('score = ', score)
+    train_score = f1_score(train_y.argmax(1).numpy(), net(train_x).argmax(1).numpy(), average="weighted")
+    
+    nb_errors = (net(val_x).argmax(1).numpy() != val_y.values).sum()
+    nb_errors_train = (net(train_x).argmax(1).numpy() != train_y.argmax(1).numpy()).sum()
+
+    print('F1 score:', score, 'Train F1 score:', train_score, 'Nb errors:', nb_errors / len(val_y), 'Nb errors train:', nb_errors_train / len(train_y))
     
     plt.plot(losses)
     plt.show()

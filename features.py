@@ -99,7 +99,7 @@ def get_elongation(row) -> float:
     area = get_area(row)
     if area == 0:
         return 0.0
-    return get_perimeter(row) / get_area(row)
+    return get_perimeter(row)**2 / get_area(row)
 
 
 def get_nb_points(row) -> float:
