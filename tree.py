@@ -1,4 +1,4 @@
-from data import get_train_data
+from data import get_train_data, get_test_data
 from features import *
 from sklearn.tree import DecisionTreeClassifier
 #random forest
@@ -14,10 +14,12 @@ from sklearn.pipeline import make_pipeline
 import time
 
 
+features = ["duration", "area", "perimeter", "elongation"] + start_color_features + end_color_features
+
 train_x, train_y, test_x, test_y = get_train_data(
     ["duration", "area", "perimeter", "elongation"] + start_color_features + end_color_features,
     n_data = -1,
-    val_size = 0.1
+    val_size = 1e-5
 )
 
 # param_dist = {
