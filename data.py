@@ -59,7 +59,7 @@ def get_train_data(features: List[str] = all_features, n_data=-1, val_size=0.2):
 
 def get_test_data(features=all_features):
     print("Reading test csvs...")
-    test_df = gpd.read_file("data/test.geojson", index_col=0)
+    test_df = gpd.read_file("data/test.geojson", engine='pyogrio')
 
     for feature in features:
         if feature not in all_features:

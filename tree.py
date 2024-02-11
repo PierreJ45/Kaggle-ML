@@ -13,29 +13,33 @@ import pandas as pd
 
 train_x, train_y, test_x, test_y = get_train_data(
     ["duration", "area", "perimeter", "elongation", "nb_points"] + start_color_features + end_color_features,
-    n_data = -1
+    n_data = -1,
+    val_size = 0.1
 )
 
-param_dist = {
-    'n_estimators': randint(50, 100),
-    'max_depth': randint(1, 50),
-    'min_samples_split': randint(5, 100),
-    'min_samples_leaf': randint(1, 100),
-}
+# param_dist = {
+#     'n_estimators': randint(50, 100),
+#     'max_depth': randint(1, 50),
+#     'min_samples_split': randint(5, 100),
+#     'min_samples_leaf': randint(1, 100),
+# }
 
-rand_search = RandomizedSearchCV(
-    RandomForestClassifier(),
-    param_distributions = param_dist, 
-    n_iter = 20,
-    cv = 5,
-    verbose = 3
-)
+# rand_search = RandomizedSearchCV(
+#     RandomForestClassifier(),
+#     param_distributions = param_dist, 
+#     n_iter = 20,
+#     cv = 5,
+#     verbose = 3
+# )
 
-rand_search.fit(train_x, train_y)
+# rand_search.fit(train_x, train_y)
 
+# best_rf = rand_search.best_estimator_
+# print('Best hyperparameters:',  rand_search.best_params_)
 
-best_rf = rand_search.best_estimator_
-print('Best hyperparameters:',  rand_search.best_params_)
+best_rf = RandomForestClassifier(n_estimators=100, max_depth=50, min_samples_split=5, min_samples_leaf=1, random_state=42)
+best_rf.fit(train_x, train_y)
+
 print(best_rf.predict(test_x)[:5])
 
 score = f1_score(test_y, best_rf.predict(test_x), labels=range(NB_CLASSES), average="weighted")
@@ -47,3 +51,4 @@ print('F1 score:', score, 'Train F1 score:', train_score, 'Nb errors:', nb_error
 
 feature_importances = pd.Series(best_rf.feature_importances_, index=train_x.columns).sort_values(ascending=False)
 print(feature_importances)
+
