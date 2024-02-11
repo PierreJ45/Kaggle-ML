@@ -1,4 +1,4 @@
-from data import get_train_data
+from data import get_train_data, get_test_data
 from features import *
 from sklearn.tree import DecisionTreeClassifier
 #random forest
@@ -9,12 +9,15 @@ from tqdm import tqdm
 from scipy.stats import randint
 from sklearn.model_selection import RandomizedSearchCV
 import pandas as pd
+from result import create_result_file
 
+
+features = ["duration", "area", "perimeter", "elongation"] + start_color_features + end_color_features
 
 train_x, train_y, test_x, test_y = get_train_data(
-    ["duration", "area", "perimeter", "elongation", "nb_points"] + start_color_features + end_color_features,
+    features,
     n_data = -1,
-    val_size = 0.1
+    val_size = 1e-5
 )
 
 # param_dist = {
@@ -52,3 +55,6 @@ print('F1 score:', score, 'Train F1 score:', train_score, 'Nb errors:', nb_error
 feature_importances = pd.Series(best_rf.feature_importances_, index=train_x.columns).sort_values(ascending=False)
 print(feature_importances)
 
+test_values = get_test_data(features)
+
+create_result_file(best_rf.predict(test_values), "tree.csv")

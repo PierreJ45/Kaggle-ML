@@ -68,16 +68,16 @@ def get_test_data(features=all_features):
     used_base_features = [feature for feature in features if feature in base_features]
     used_other_features = [feature for feature in features if feature in other_features]
     
-    test_x = test_df[used_base_features]
+    test_x = test_df[used_base_features].copy()
     
-    for feature in base_features:
+    for feature in tqdm(base_features):
         if base_features_func[feature] is not None:
             test_df[feature] = test_df.apply(base_features_func[feature], axis=1)
         
         if feature in used_base_features: #in case it was changed previous if ?
             test_x[feature] = test_df[feature] 
     
-    for feature in used_other_features:
+    for feature in tqdm(used_other_features):
         test_x[feature] = test_df.apply(other_features_func[feature], axis=1)
 
     normalize(test_x)
