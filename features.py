@@ -66,17 +66,43 @@ def get_perimeter(row) -> float:
     return row["geometry"].length
 
 
-def get_duration(row) -> float:
+def get_construction_dates_idx(row) -> tuple:
     dates = [row[f"date{i}"] for i in range(NB_DATES)]
     change_status_dates = [row[f"change_status_date{i}"] for i in range(NB_DATES)]
-    
+
     start_dates = [date for i, date in enumerate(dates) if change_status_dates[i] == "Greenland"]
     start = min(dates) if len(start_dates) == 0 else max(start_dates)
     
     end_dates = [date for i, date in enumerate(dates) if change_status_dates[i] == "Construction Done"]
     end = max(dates) if len(end_dates) == 0 else min(end_dates)
     
-    return end - start
+    return dates.index(start), dates.index(end)
+
+
+def get_duration(row) -> float:
+    start, end = get_construction_dates_idx(row)
+    return row[f"date{end}"] - row[f"date{start}"]
+
+
+def get_color_start(row, color, value) -> float:
+    start, _ = get_construction_dates_idx(row)
+    return row[f"img_{color}_{value}_date{start + 1}"]
+
+
+def get_color_end(row, color, value) -> float:
+    _, end = get_construction_dates_idx(row)
+    return row[f"img_{color}_{value}_date{end + 1}"]
+
+
+def get_elongation(row) -> float:
+    area = get_area(row)
+    if area == 0:
+        return 0.0
+    return get_perimeter(row) / get_area(row)
+
+
+def get_nb_points(row) -> float:
+    return len(row["geometry"].exterior.coords)
 
 
 base_features = list(base_features_func.keys())
@@ -85,12 +111,22 @@ other_features_func = {
     "area": get_area,
     "perimeter": get_perimeter,
     "duration": get_duration,
+    "elongation": get_elongation,
+    "nb_points": get_nb_points,
 }
 
 for urban_feature, urban_type in zip(URBAN_FEATURES, URBAN_TYPES):
     other_features_func[urban_feature] = partial(is_type, base_type="urban_type", type_name=urban_type)
 for geography_feature, geography_type in zip(GEOGRAPHY_FEATURES, GEOGRAPHY_TYPES):
     other_features_func[geography_feature] = partial(is_type, base_type="geography_type", type_name=geography_type)
+
+for color in COLORS:
+    for value in ["mean", "std"]:
+        other_features_func[f"{color}_{value}_start"] = partial(get_color_start, color=color, value=value)
+        other_features_func[f"{color}_{value}_end"] = partial(get_color_end, color=color, value=value)
+
+start_color_features = [f"{color}_{value}_start" for color in COLORS for value in ["mean", "std"]]
+end_color_features = [f"{color}_{value}_end" for color in COLORS for value in ["mean", "std"]]
 
 other_features = list(other_features_func.keys())
 

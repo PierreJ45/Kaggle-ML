@@ -3,6 +3,7 @@ import numpy as np
 from sklearn.model_selection import train_test_split
 from features import all_features, base_features, other_features, base_features_func, other_features_func
 from typing import List
+from tqdm import tqdm
 
 
 change_type_id = {"Demolition": 0, "Road": 1, "Residential": 2, "Commercial": 3, "Industrial": 4, "Mega Projects": 5}
@@ -18,10 +19,13 @@ def normalize(x):
                 x[feature] = 1.0
 
 
-def get_train_data(features: List[str] = all_features, n_data=None, val_size=0.2):
+def get_train_data(features: List[str] = all_features, n_data=-1, val_size=0.2):
     print("Reading train csvs...")
-    train_df: gpd.GeoDataFrame = gpd.read_file("data/train.geojson", engine='pyogrio', rows=None)
+    train_df: gpd.GeoDataFrame = gpd.read_file("data/train.geojson", engine='pyogrio')
+    if n_data > 0:
+        train_df = train_df.sample(n=n_data, random_state=42)
     
+    print("Formatting train data...")
     for feature in features:
         if feature not in all_features:
             raise ValueError(f"Feature {feature} is not a valid feature (you may want to implement it in features.py)")
@@ -29,16 +33,18 @@ def get_train_data(features: List[str] = all_features, n_data=None, val_size=0.2
     used_base_features = [feature for feature in features if feature in base_features]
     used_other_features = [feature for feature in features if feature in other_features]
     
-    train_x = train_df[used_base_features]
+    train_x = train_df[used_base_features].copy()
     
-    for feature in base_features:
+    print("Formatting base features...")
+    for feature in tqdm(base_features):
         if base_features_func[feature] is not None:
             train_df[feature] = train_df.apply(base_features_func[feature], axis=1)
         
         if feature in used_base_features:
             train_x[feature] = train_df[feature]
     
-    for feature in used_other_features:
+    print("Formatting other features...")
+    for feature in tqdm(used_other_features):
         train_x[feature] = train_df.apply(other_features_func[feature], axis=1)
     
     train_y = train_df["change_type"].apply(change_type_id.get)
