@@ -17,11 +17,13 @@ from result import create_result_file
 
 features = ["duration", "area", "perimeter", "elongation"] + start_color_features + end_color_features
 
-train_x, train_y, test_x, test_y = get_train_data(
+train_x, train_y, val_x, val_y = get_train_data(
     ["duration", "area", "perimeter", "elongation"] + start_color_features + end_color_features,
     n_data = -1,
     val_size = 1e-5
 )
+
+test_x = get_test_data(["duration", "area", "perimeter", "elongation"] + start_color_features + end_color_features)
 
 # param_dist = {
 #     'n_estimators': randint(50, 100),
@@ -45,21 +47,21 @@ train_x, train_y, test_x, test_y = get_train_data(
 
 t0 = time.time()
 
-pipeline = make_pipeline(PCA(n_components=10), RandomForestClassifier(n_estimators=100, max_depth=50, min_samples_split=5, min_samples_leaf=1, random_state=42))
+pipeline = make_pipeline(PCA(n_components=10), RandomForestClassifier(n_estimators=300, max_depth=50, min_samples_split=5, min_samples_leaf=1, random_state=42))
 
 pipeline.fit(train_x, train_y)
 
-#print(pipeline.predict(test_x)[:5])
+#print(pipeline.predict(val_x)[:5])
 
-score = f1_score(test_y, pipeline.predict(test_x), labels=range(NB_CLASSES), average="weighted")
+score = f1_score(val_y, pipeline.predict(val_x), labels=range(NB_CLASSES), average="weighted")
 train_score = f1_score(train_y, pipeline.predict(train_x), labels=range(NB_CLASSES), average="weighted")
-nb_errors = (pipeline.predict(test_x) != test_y).sum()
+nb_errors = (pipeline.predict(val_x) != val_y).sum()
 nb_errors_train = (pipeline.predict(train_x) != train_y).sum()
 
-print('F1 score:', score, 'Train F1 score:', train_score, 'Nb errors:', nb_errors / len(test_y), 'Nb errors train:', nb_errors_train / len(train_y))
+print('F1 score:', score, 'Train F1 score:', train_score, 'Nb errors:', nb_errors / len(val_y), 'Nb errors train:', nb_errors_train / len(train_y))
 print('DataLessTime:', time.time() - t0)
 
 #feature_importances = pd.Series(pipeline.feature_importances_, index=train_x.columns).sort_values(ascending=False)
 #print(feature_importances)
 
-create_result_file(pipeline.predict(test_x))
+create_result_file(pipeline.predict(test_x), 'result.csv')
