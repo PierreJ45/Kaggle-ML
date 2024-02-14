@@ -1,7 +1,6 @@
-from tqdm import tqdm
+import pandas as pd
+
 
 def create_result_file(predictions, file_name='result.csv'):
-    with open(file_name, 'w') as f:
-        f.write('Id,change_type\n')
-        for i in range(len(predictions)):
-            f.write(f'{i},{predictions[i]}\n')
+    pred_df = pd.DataFrame(predictions, columns=['change_type'])
+    pred_df.to_csv(file_name, index=True, index_label='Id')

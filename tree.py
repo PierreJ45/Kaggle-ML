@@ -20,7 +20,8 @@ features = ["duration", "area", "perimeter", "elongation"] + start_color_feature
 train_x, train_y, val_x, val_y = get_train_data(
     ["duration", "area", "perimeter", "elongation"] + start_color_features + end_color_features,
     n_data = -1,
-    val_size = 0.2
+    val_size = 0.2,
+    file_name = "data/train.geojson"
 )
 
 test_x = get_test_data(["duration", "area", "perimeter", "elongation"] + start_color_features + end_color_features)
