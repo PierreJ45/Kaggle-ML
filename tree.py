@@ -20,7 +20,7 @@ features = ["duration", "area", "perimeter", "elongation"] + start_color_feature
 train_x, train_y, val_x, val_y = get_train_data(
     ["duration", "area", "perimeter", "elongation"] + start_color_features + end_color_features,
     n_data = -1,
-    val_size = 1e-5
+    val_size = 0.2
 )
 
 test_x = get_test_data(["duration", "area", "perimeter", "elongation"] + start_color_features + end_color_features)
@@ -53,8 +53,8 @@ pipeline.fit(train_x, train_y)
 
 #print(pipeline.predict(val_x)[:5])
 
-score = f1_score(val_y, pipeline.predict(val_x), labels=range(NB_CLASSES), average="weighted")
-train_score = f1_score(train_y, pipeline.predict(train_x), labels=range(NB_CLASSES), average="weighted")
+score = f1_score(val_y, pipeline.predict(val_x), labels=range(NB_CLASSES), average="macro")
+train_score = f1_score(train_y, pipeline.predict(train_x), labels=range(NB_CLASSES), average="macro")
 nb_errors = (pipeline.predict(val_x) != val_y).sum()
 nb_errors_train = (pipeline.predict(train_x) != train_y).sum()
 

@@ -60,7 +60,7 @@ def main():
     print(net(train_x))
     print(net(train_x).argmax(1).numpy())
     print(train_y.argmax(1).numpy())
-    score = f1_score(val_y.values, pred_y, average="weighted")
+    score = f1_score(val_y.values, pred_y, average="macro")
     print('score = ', score)
     
     plt.plot(losses)
