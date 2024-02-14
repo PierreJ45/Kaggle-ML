@@ -30,7 +30,7 @@ class Net(nn.Module):
 def main():
     features = ["duration", "area", "perimeter", "elongation"] + start_color_features + end_color_features
     
-    net = Net(len(features), [50, 50, 50])
+    net = Net(len(features), [100]*8)
     criterion = nn.CrossEntropyLoss()
     
     train_x, train_y, val_x, val_y = get_train_data(features, n_data=-1)
@@ -45,7 +45,7 @@ def main():
     losses = []
     accuracies = []
     
-    pbar = tqdm(range(1000))
+    pbar = tqdm(range(100))
     for epoch in pbar:
         optimizer.zero_grad()
         outputs = net(train_x)
@@ -62,8 +62,8 @@ def main():
     print(net(train_x))
     print(net(train_x).argmax(1).numpy())
     print(train_y.argmax(1).numpy())
-    score = f1_score(val_y.values, pred_y, average="weighted")
-    train_score = f1_score(train_y.argmax(1).numpy(), net(train_x).argmax(1).numpy(), average="weighted")
+    score = f1_score(val_y.values, pred_y, average="macro")
+    train_score = f1_score(train_y.argmax(1).numpy(), net(train_x).argmax(1).numpy(), average="macro")
     
     nb_errors = (net(val_x).argmax(1).numpy() != val_y.values).sum()
     nb_errors_train = (net(train_x).argmax(1).numpy() != train_y.argmax(1).numpy()).sum()

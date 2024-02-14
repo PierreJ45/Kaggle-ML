@@ -49,6 +49,9 @@ def get_train_data(features: List[str] = all_features, n_data=-1, val_size=0.2):
     
     train_y = train_df["change_type"].apply(change_type_id.get)
     
+    if val_size <= 0.0:
+        return train_x, train_y, None, None
+    
     train_x, val_x, train_y, val_y = train_test_split(train_x, train_y, test_size=val_size, random_state=42)
 
     normalize(train_x)
