@@ -1,23 +1,23 @@
 import geopandas as gpd
 import numpy as np
 from sklearn.model_selection import train_test_split
-from features import all_features, base_features, other_features, base_features_func, other_features_func
+from features import *
 from typing import List
 from tqdm import tqdm
 
 
 change_type_id = {"Demolition": 0, "Road": 1, "Residential": 2, "Commercial": 3, "Industrial": 4, "Mega Projects": 5}
 
-def normalize(x, normalize_coeffs = {}):
+def normalize(x, normalized_coeffs = {}):
     for feature in x.columns:
         if x[feature].dtype == np.float64 or x[feature].dtype == np.int64:
-            if feature not in normalize_coeffs:
-                normalize_coeffs[feature] = {"std": x[feature].std(), "mean": x[feature].mean()}
+            if feature not in normalized_coeffs:
+                normalized_coeffs[feature] = {"std": x[feature].std(), "mean": x[feature].mean()}
             
-            if normalize_coeffs[feature]["std"] != 0:
-                x[feature] = (x[feature] - normalize_coeffs[feature]["mean"]) / normalize_coeffs[feature]["std"]
+            if normalized_coeffs[feature]["std"] != 0:
+                x[feature] = (x[feature] - normalized_coeffs[feature]["mean"]) / normalized_coeffs[feature]["std"]
     
-    return normalize_coeffs
+    return normalized_coeffs
 
 
 def get_train_data(features: List[str] = all_features, n_data=-1, val_size=0.2, file_name="data/train.geojson"):
@@ -50,17 +50,17 @@ def get_train_data(features: List[str] = all_features, n_data=-1, val_size=0.2, 
     
     train_y = train_df["change_type"].apply(change_type_id.get)
     
-    normalize_coeffs = normalize(train_x)
+    normalized_coeffs = normalize(train_x)
     
     if val_size <= 0.0:
-        return train_x, train_y, None, None, normalize_coeffs
+        return train_x, train_y, None, None, normalized_coeffs
     
     train_x, val_x, train_y, val_y = train_test_split(train_x, train_y, test_size=val_size, random_state=42)
     
-    return train_x, train_y, val_x, val_y, normalize_coeffs
+    return train_x, train_y, val_x, val_y, normalized_coeffs
 
 
-def get_test_data(features, normalize_coeffs):
+def get_test_data(features, normalized_coeffs):
     print("Reading test csvs...")
     test_df = gpd.read_file("data/test.geojson", engine='pyogrio')
 
@@ -83,7 +83,7 @@ def get_test_data(features, normalize_coeffs):
     for feature in tqdm(used_other_features):
         test_x[feature] = test_df.apply(other_features_func[feature], axis=1)
 
-    normalize(test_x, normalize_coeffs)
+    normalize(test_x, normalized_coeffs)
     
     return test_x
 

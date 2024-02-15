@@ -25,13 +25,14 @@ change_type_map = {'Demolition': 0, 'Road': 1, 'Residential': 2, 'Commercial': 3
 # train_x = train_x.reshape(-1, 1)
 # train_y = train_df['change_type'].apply(lambda x: change_type_map[x])
 
-train_x, train_y, _, _, normalize_coeffs = get_train_data(['area'], n_data=-1, val_size=0.0, file_name="data/train.geojson")
-train_x = np.asarray(train_x[['area']]).reshape(-1, 1)
+train_x, train_y, _, _, normalized_coeffs = get_train_data(['area'], n_data=-1, val_size=0.0, file_name="data/train.geojson")
+# train_x = np.asarray(train_x[['area']]).reshape(-1, 1)
 
 # test_x = np.asarray(test_df[['geometry']].area)
 # test_x = test_x.reshape(-1, 1)
 
-test_x = np.asarray(get_test_data(['area'], normalize_coeffs)).reshape(-1, 1)
+test_x = get_test_data(['area'], normalized_coeffs)
+# test_x = np.asarray(test_x).reshape(-1, 1)
 
 print (train_x.shape, train_y.shape, test_x.shape)
 
