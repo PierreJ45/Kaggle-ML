@@ -20,7 +20,7 @@ def normalize(x, normalized_coeffs = {}):
     return normalized_coeffs
 
 
-def get_train_data(features: List[str] = all_features, n_data=-1, val_size=0.2, file_name="data/train.geojson"):
+def get_train_data(features: List[str] = all_features, n_data=-1, val_size=0.2, file_name="data/train.geojson", same_coeffs=True):
     print("Reading train csvs...")
     train_df: gpd.GeoDataFrame = gpd.read_file(file_name, engine='pyogrio')
     if n_data > 0:
@@ -51,6 +51,8 @@ def get_train_data(features: List[str] = all_features, n_data=-1, val_size=0.2, 
     train_y = train_df["change_type"].apply(change_type_id.get)
     
     normalized_coeffs = normalize(train_x)
+    if not same_coeffs:
+        normalized_coeffs = None
     
     if val_size <= 0.0:
         return train_x, train_y, None, None, normalized_coeffs
@@ -60,7 +62,7 @@ def get_train_data(features: List[str] = all_features, n_data=-1, val_size=0.2, 
     return train_x, train_y, val_x, val_y, normalized_coeffs
 
 
-def get_test_data(features, normalized_coeffs):
+def get_test_data(features, normalize_coeffs=None):
     print("Reading test csvs...")
     test_df = gpd.read_file("data/test.geojson", engine='pyogrio')
 
@@ -83,7 +85,10 @@ def get_test_data(features, normalized_coeffs):
     for feature in tqdm(used_other_features):
         test_x[feature] = test_df.apply(other_features_func[feature], axis=1)
 
-    normalize(test_x, normalized_coeffs)
+    if normalize_coeffs is not None:
+        normalize(test_x, normalize_coeffs)
+    else :
+        normalize(test_x)
     
     return test_x
 
