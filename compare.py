@@ -1,6 +1,6 @@
 from data import get_train_data, get_test_data
 
-train_x, train_y, val_x, val_y = get_train_data(
+train_x, train_y, val_x, val_y, _ = get_train_data(
     n_data = -1,
     val_size = 0.2,
     file_name = "data/train.geojson"

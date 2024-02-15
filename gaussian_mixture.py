@@ -4,7 +4,7 @@ from sklearn.mixture import GaussianMixture
 from sklearn.metrics import f1_score
 import pandas as pd
 
-train_x, train_y, test_x, test_y = get_train_data(
+train_x, train_y, test_x, test_y, _ = get_train_data(
     ["duration", "area", "perimeter", "elongation", "nb_points"] + start_color_features + end_color_features,
     n_data = -1
 )

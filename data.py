@@ -94,7 +94,7 @@ def get_test_data(features, normalize_coeffs=None):
 
 
 if __name__ == "__main__":
-    train_x, train_y, val_x, val_y = get_train_data(["area", "duration", "date0"], 100)
+    train_x, train_y, val_x, val_y, _ = get_train_data(["area", "duration", "date0"], 100)
     print(train_x.head())
     print('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',train_x['area'].mean())
     print('bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb',train_x['area'].std())

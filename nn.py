@@ -33,7 +33,7 @@ def main():
     net = Net(len(features), [100]*8)
     criterion = nn.CrossEntropyLoss()
     
-    train_x, train_y, val_x, val_y = get_train_data(features, n_data=-1)
+    train_x, train_y, val_x, val_y, _ = get_train_data(features, n_data=-1)
     
     train_x = torch.tensor(train_x.values, dtype=torch.float32)
     val_x = torch.tensor(val_x.values, dtype=torch.float32)

@@ -9,7 +9,7 @@ from features import DATE_FEATURES, COLOR_FEATURES, CHANGE_STATUS_DATE_FEATURES,
 
 t0 = time.time()
 
-train_x, train_y, val_x, val_y = get_train_data(["duration", "area", "perimeter", "elongation"] + COLOR_FEATURES, n_data=-1)
+train_x, train_y, val_x, val_y, _ = get_train_data(["duration", "area", "perimeter", "elongation"] + COLOR_FEATURES, n_data=-1)
 
 pipeline = make_pipeline(PCA(n_components=2), KNeighborsClassifier(n_neighbors=5))
 
