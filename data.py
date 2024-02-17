@@ -87,7 +87,7 @@ def get_test_data(features, normalize_coeffs=None):
 
     if normalize_coeffs is not None:
         normalize(test_x, normalize_coeffs)
-    else :
+    else:
         normalize(test_x)
     
     return test_x

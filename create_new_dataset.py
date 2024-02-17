@@ -17,7 +17,6 @@ def get_random_float(max) -> float:
 print("Reading train csvs...")
 train_df: gpd.GeoDataFrame = gpd.read_file("data/train.geojson", engine='pyogrio')
 
-# get number of data for each class ("change_type") and get the max
 max_data = train_df["change_type"].value_counts().max()
 
 for change_type in CLASSES:
