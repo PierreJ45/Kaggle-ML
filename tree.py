@@ -13,9 +13,9 @@ from result import *
 features = all_features
 
 train_x, train_y, val_x, val_y, normalized_coeffs = get_train_data(
-    ["duration", "area", "perimeter", "elongation"] + start_color_features + end_color_features,
+    features,
     n_data = -1,
-    val_size = 0.2,
+    val_size = 0.0,
     file_name = "data/train.geojson",
     same_coeffs = True
 )
@@ -48,7 +48,7 @@ train_x, train_y, val_x, val_y, normalized_coeffs = get_train_data(
 rf = RandomForestClassifier(n_estimators=300, max_depth=59, min_samples_split=3, min_samples_leaf=1, random_state=42, class_weight='balanced')
 rf.fit(train_x, train_y)
 
-print_score(rf, train_x, train_y, val_x, val_y)
+# print_score(rf, train_x, train_y, val_x, val_y)
 
 feature_importances = pd.Series(rf.feature_importances_, index=train_x.columns).sort_values(ascending=False)
 print(feature_importances)
