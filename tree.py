@@ -10,7 +10,7 @@ from result import *
 
 
 # features = ["duration", "area", "perimeter", "elongation"] + start_color_features + end_color_features
-features = all_features
+features = ["duration", "area", "perimeter", "elongation", "nb_points"] + delta_color_features + start_color_features + end_color_features + URBAN_FEATURES + GEOGRAPHY_FEATURES + COLOR_FEATURES
 
 train_x, train_y, val_x, val_y, normalized_coeffs = get_train_data(
     features,
@@ -51,6 +51,8 @@ rf.fit(train_x, train_y)
 # print_score(rf, train_x, train_y, val_x, val_y)
 
 feature_importances = pd.Series(rf.feature_importances_, index=train_x.columns).sort_values(ascending=False)
-print(feature_importances)
+# print(feature_importances)
+for feature in feature_importances.index:
+    print(feature, feature_importances[feature])
 
 # create_result_file(rf.predict(test_x), 'rf.csv')

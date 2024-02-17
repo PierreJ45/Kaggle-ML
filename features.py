@@ -90,6 +90,10 @@ def get_color_start(row, color, value) -> float:
     return row[f"img_{color}_{value}_date{start + 1}"]
 
 
+def get_color_delta(row, color, value) -> float:
+    return get_color_end(row, color, value) - get_color_start(row, color, value)
+
+
 def get_color_end(row, color, value) -> float:
     _, end = get_construction_dates_idx(row)
     return row[f"img_{color}_{value}_date{end + 1}"]
@@ -125,9 +129,11 @@ for color in COLORS:
     for value in ["mean", "std"]:
         other_features_func[f"{color}_{value}_start"] = partial(get_color_start, color=color, value=value)
         other_features_func[f"{color}_{value}_end"] = partial(get_color_end, color=color, value=value)
+        other_features_func[f"{color}_{value}_delta"] = partial(get_color_delta, color=color, value=value)
 
 start_color_features = [f"{color}_{value}_start" for color in COLORS for value in ["mean", "std"]]
 end_color_features = [f"{color}_{value}_end" for color in COLORS for value in ["mean", "std"]]
+delta_color_features = [f"{color}_{value}_delta" for color in COLORS for value in ["mean", "std"]]
 
 other_features = list(other_features_func.keys())
 
